@@ -1,7 +1,7 @@
 import streamlit as st
 import subprocess
 import os
-
+import yt_dlp
 
 # ---------------------- UI -----------------------
 st.set_page_config(page_title="TikTok Extractor", page_icon="🎬", layout="centered")
@@ -51,15 +51,15 @@ if st.button("Créer la vidéo"):
     else:
         scale = (2160, 3840)
 
-    # 1️⃣ Téléchargement
+    # 1️⃣ Téléchargement avec yt_dlp en Python
     update(10, "⏬ Téléchargement YouTube en cours...")
-    subprocess.run([
-        "python", "-m", "yt_dlp",
-        "-f", "bestvideo+bestaudio/best",
-        "--merge-output-format", "mp4",
-        "-o", "video.mp4",
-        url
-    ], check=True)
+    ydl_opts = {
+        'format': 'bestvideo+bestaudio/best',
+        'outtmpl': 'video.mp4',
+        'quiet': True,
+    }
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
 
     # 2️⃣ Découpe
     update(40, "✂️ Découpage de l'extrait...")
